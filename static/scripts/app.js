@@ -3,7 +3,7 @@
     'use strict';
 
     var configOptions = {
-        endpoint : '/pronounceable_percent'
+        endpoint : '/api/word'
     };
 
     jQuery(document).ready(run);
