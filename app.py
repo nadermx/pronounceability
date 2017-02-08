@@ -12,10 +12,11 @@ q = Queue(connection=redis_conn)
 def index():
     return render_template('index.html')
 
-@app.route('/api/word', methods=['POST'])
+@app.route('/api/word', methods=['POST', 'GET'])
+@models.db_session
 def check():
     if request.method == "POST":
-        word = request.args.get('word')
+        word = request.form['word']
         db_word = models.Word.get(word=word)
         if not db_word:
             job = q.enqueue(check_pronounceability, word)

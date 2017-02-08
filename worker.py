@@ -24,6 +24,6 @@ def check_pronounceability(word):
     text_clf = text_clf.fit(X_train, y_train)
     stuff = text_clf.predict_proba([word])
     pronounceability = round(100*stuff[0][1], 2)
-    models.Word(pronounceability=pronounceability)
+    models.Word(word=word, pronounceability=pronounceability)
     models.commit()
     return pronounceability
