@@ -3,11 +3,12 @@ from rq import Queue
 from redis import Redis
 from worker import check_pronounceability
 import models
+from flask_cors import CORS
 
 app = Flask(__name__)
 redis_conn = Redis()
 q = Queue(connection=redis_conn)
-
+CORS(app)
 @app.route('/')
 def index():
     return render_template('index.html')
