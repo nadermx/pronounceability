@@ -1,5 +1,3 @@
-from gevent import monkey
-monkey.patch_all(socket=False)
 import multiprocessing
 
 
