@@ -17,6 +17,8 @@ def index():
 def check():
     if request.method == "POST":
         word = request.form['word']
+        if not word:
+            return render_template('index.html')
         db_word = models.Word.get(word=word)
         if not db_word:
             job = q.enqueue(check_pronounceability, word)
