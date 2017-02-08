@@ -10,7 +10,7 @@ def scramble(s):
 
 @models.db_session
 def check_pronounceability(word):
-    words = [w.strip() for w in open('/usr/share/dict/words') if w == w.lower()]
+    words = [w.strip() for w in open('words.txt') if w == w.lower()]
     scrambled = [scramble(w) for w in words]
 
     X = words+scrambled
