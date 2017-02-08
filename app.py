@@ -1,29 +1,34 @@
-import random
-def scramble(s):
-    return "".join(random.sample(s, len(s)))
+from flask import Flask, render_template, jsonify, request
+from rq import Queue
+from redis import Redis
+from worker import check_pronounceability
+import models
 
-words = [w.strip() for w in open('/usr/share/dict/words') if w == w.lower()]
-scrambled = [scramble(w) for w in words]
+app = Flask(__name__)
+redis_conn = Redis()
+q = Queue(connection=redis_conn)
 
-X = words+scrambled
-y = ['word']*len(words) + ['unpronounceable']*len(scrambled)
+@app.route('/')
+def index():
+    return render_template('index.html')
 
-from sklearn.model_selection import train_test_split
-X_train, X_test, y_train, y_test = train_test_split(X, y)
+@app.route('/api/word', methods=['POST'])
+def check():
+    if request.method == "POST":
+        word = request.args.get('word')
+        db_word = models.Word.get(word=word)
+        if not db_word:
+            job = q.enqueue(check_pronounceability, word)
+            return jsonify(job.id)
+        else:
+            return jsonify(pronounceability=db_word.pronounceability)
+    if request.method == "GET":
+        job_id = request.args.get('job_id')
+        job = q.fetch_job(job_id)
+        return jsonify(job.result)
 
-from sklearn.pipeline import Pipeline
-from sklearn.feature_extraction.text import CountVectorizer
-from sklearn.naive_bayes import MultinomialNB
+if __name__ == '__main__':
+    # app.run(host='0.0.0.0', port=5000, debug=True)
+    # app.run(debug = True)
+    app.run()
 
-text_clf = Pipeline([
-    ('vect', CountVectorizer(analyzer='char', ngram_range=(1, 3))),
-    ('clf', MultinomialNB())
-    ])
-
-text_clf = text_clf.fit(X_train, y_train)
-predicted = text_clf.predict(X_test)
-
-from sklearn import metrics
-print(metrics.classification_report(y_test, predicted))
-
-print(text_clf.predict("hola how are you lou".split()))
