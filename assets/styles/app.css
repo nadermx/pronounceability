@@ -1,0 +1,39 @@
+.container {
+    margin-top: 20%;
+}
+.no-padding {
+    padding: 0;
+}
+.no-radious {
+    border-radius: 0;
+}
+.form-horizontal {
+    margin-top: 60px;
+}
+.control-label {
+    font-weight: normal;
+}
+input.form-control,
+input.form-control:hover,
+input.form-control:focus {
+    border: 0;
+    box-shadow: none;
+    border-bottom: 1px solid;
+    outline: none;
+}
+
+@media (max-width: 768px) {
+    .form-horizontal label,
+    .form-horizontal input,
+    .form-horizontal button {
+        font-size: 20px;
+    }
+    .form-label {
+        text-align: left;
+        margin: 0;
+    }
+    .form-button {
+        clear: both;
+        padding-top: 15px;
+    }
+}
