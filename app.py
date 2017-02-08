@@ -26,7 +26,9 @@ def check():
     if request.method == "GET":
         job_id = request.args.get('job_id')
         job = q.fetch_job(job_id)
-        return jsonify(job.result)
+        if not job.result:
+            return jsonify(False)
+        return jsonify(pronounceability=job.result)
 
 if __name__ == '__main__':
     # app.run(host='0.0.0.0', port=5000, debug=True)
