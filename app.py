@@ -20,7 +20,7 @@ def check():
         db_word = models.Word.get(word=word)
         if not db_word:
             job = q.enqueue(check_pronounceability, word)
-            return jsonify(job.id)
+            return jsonify(job_id =job.id)
         else:
             return jsonify(pronounceability=db_word.pronounceability)
     if request.method == "GET":
