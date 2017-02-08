@@ -3,7 +3,7 @@
     'use strict';
 
     var configOptions = {
-        endpoint : '/api/word'
+        endpoint : 'https://pronounceability.com/api/word'
     };
 
     jQuery(document).ready(run);
@@ -14,7 +14,16 @@
 
     function submitForm(e) {
         e.preventDefault();
-        var data = jQuery(e.currentTarget).serialize();
+        var form = jQuery(e.currentTarget),
+            data = form.serialize();
+
+        if (!form.find('input').val()) {
+            renderMessage('alert-info', 'Looks like <b>empty</b> is 100% not pronounceable');
+
+            return;
+        }
+
+        renderMessage('alert-info', 'May take a minute or two to calculate. <span class="strong">Calculating ...</span>');
 
         jQuery('button').prop('disabled', true);
         jQuery.ajax({
@@ -26,11 +35,9 @@
         });
 
         function readQueueResults(response) {
-            console.log(response);
             var data = response;
-            console.log(data);
+
             if (data.job) {
-                console.log('we here');
                 var interval = setInterval(function () {
                     jQuery.ajax({
                         url: configOptions.endpoint,
@@ -56,8 +63,6 @@
         }
 
         function showError(error) {
-            console.warn(error.status, error.statusText);
-
             jQuery('button').prop('disabled', false);
 
             renderMessage('alert-danger', '<b>' + error.status + '</b> - ' + error.statusText);
