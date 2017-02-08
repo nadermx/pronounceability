@@ -28,25 +28,27 @@
 
         function readQueueResults(response) {
             console.log(response);
-            var data = jQuery.parseJSON(response);
-
-            var interval = setInterval(function () {
-                jQuery.ajax({
-                    url: configOptions.endpoint,
-                    method: 'GET',
-                    data: 'id=' + data.id,
-                    success: showResults
-                });
-            }, 500);
-
+            var data = response;
+            console.log(data);
+            if (data.job) {
+                console.log('we here');
+                var interval = setInterval(function () {
+                    jQuery.ajax({
+                        url: configOptions.endpoint,
+                        method: 'GET',
+                        data: 'job_id=' + data.job,
+                        success: showResults
+                    });
+                }, 500);
+            }
             function showResults(response) {
                 if (response) {
                     clearInterval(interval);
 
                     jQuery('button').prop('disabled', false);
 
-                    var data = jQuery.parseJSON(response);
-                    renderMessage('alert-success', 'Your word is <b>' + data.percent + '%</b> pronounceable');
+                    var data = response;
+                    renderMessage('alert-success', 'Your word is <b>' + data.pronounceability + '%</b> pronounceable');
                 }
             }
         }
