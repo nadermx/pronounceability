@@ -21,6 +21,12 @@ input.form-control:focus {
     border-bottom: 1px solid;
     outline: none;
 }
+.footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
 
 @media (max-width: 768px) {
     .form-horizontal label,
