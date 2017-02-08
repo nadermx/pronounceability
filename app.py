@@ -25,3 +25,5 @@ predicted = text_clf.predict(X_test)
 
 from sklearn import metrics
 print(metrics.classification_report(y_test, predicted))
+
+print(text_clf.predict("hola how are you lou".split()))
