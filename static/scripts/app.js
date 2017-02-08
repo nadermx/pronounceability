@@ -17,7 +17,6 @@
         var data = jQuery(e.currentTarget).serialize();
 
         jQuery('button').prop('disabled', true);
-
         jQuery.ajax({
             url: configOptions.endpoint,
             method: 'POST',
