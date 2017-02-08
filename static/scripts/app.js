@@ -41,6 +41,9 @@
                     });
                 }, 500);
             }
+            if (data.pronounceability) {
+                showResults(response);
+            }
             function showResults(response) {
                 if (response) {
                     clearInterval(interval);
