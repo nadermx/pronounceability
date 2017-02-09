@@ -1,14 +1,17 @@
 from flask import Flask, render_template, jsonify, request
 from rq import Queue
+from worker import conn
 from redis import Redis
-from worker import check_pronounceability
 import models
 from flask_cors import CORS
+from utilities import check_pronounceability
 
 app = Flask(__name__)
 redis_conn = Redis()
-q = Queue(connection=redis_conn)
 CORS(app)
+q = Queue(connection=conn)
+
+
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -22,7 +25,7 @@ def check():
             return render_template('index.html')
         db_word = models.Word.get(word=word)
         if not db_word:
-            job = q.enqueue(check_pronounceability, word)
+            job = q.enqueue_call(check_pronounceability, args=(word,))
             return jsonify(job=job.id)
         else:
             return jsonify(pronounceability=db_word.pronounceability)
