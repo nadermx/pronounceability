@@ -6,6 +6,7 @@ import models
 import random
 
 words = [w.strip() for w in open('words.txt') if w == w.lower()]
+
 def scramble(s):
     return "".join(random.sample(s, len(s)))
 

@@ -3,7 +3,7 @@
     'use strict';
 
     var configOptions = {
-        endpoint : 'https://pronounceability.com/api/word'
+        endpoint : '/api/word'
     };
 
     jQuery(document).ready(run);
