@@ -4,8 +4,11 @@ from rq.job import Job
 from worker import conn
 from flask_cors import CORS
 from utilities import check_pronounceability
+import rq_dashboard
 
 app = Flask(__name__)
+app.config.from_object(rq_dashboard.default_settings)
+app.register_blueprint(rq_dashboard.blueprint, url_prefix="/rq")
 CORS(app)
 q = Queue(connection=conn)
 
@@ -38,6 +41,6 @@ def check():
 
 if __name__ == '__main__':
     # app.run(host='0.0.0.0', port=5000, debug=True)
-    app.run(debug = True)
-    # app.run()
+    # app.run(debug = True)
+    app.run()
 
