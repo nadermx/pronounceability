@@ -32,7 +32,10 @@ def check():
             return jsonify(pronounceability=db_word.pronounceability)
     if request.method == "GET":
         job_id = request.args.get('job_id')
-        job = q.fetch_job(job_id)
+        try:
+            job = q.fetch_job(job_id)
+        except:
+            return jsonify(pronounceability='Error')
         if not job:
             return jsonify('no job id')
         if job.is_finished:
@@ -43,6 +46,6 @@ def check():
 
 if __name__ == '__main__':
     # app.run(host='0.0.0.0', port=5000, debug=True)
-    # app.run(debug = True)
-    app.run()
+    app.run(debug = True)
+    # app.run()
 
