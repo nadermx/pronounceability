@@ -32,10 +32,7 @@ def check():
             return jsonify(pronounceability=db_word.pronounceability)
     if request.method == "GET":
         job_id = request.args.get('job_id')
-        try:
-            job = q.fetch_job(job_id)
-        except:
-            return jsonify(pronounceability='Error')
+        job = q.fetch_job(job_id)
         if not job:
             return jsonify('no job id')
         if job.is_finished:

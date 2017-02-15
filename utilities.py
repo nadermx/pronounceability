@@ -28,4 +28,4 @@ def check_pronounceability(word):
     pronounceability = round(100*stuff[0][1], 2)
     models.Word(word=word, pronounceability=pronounceability)
     models.commit()
-    return pronounceability
+    return str(pronounceability)
