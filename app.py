@@ -35,11 +35,12 @@ def check():
         job = q.fetch_job(job_id)
         if job.is_finished:
             return jsonify(pronounceability=job.result)
-        else:
-            return jsonify(False)
+        if job.is_failed:
+            return jsonify(pronounceability='Error')
+        return jsonify(False)
 
 if __name__ == '__main__':
     # app.run(host='0.0.0.0', port=5000, debug=True)
-    app.run(debug = True)
-    # app.run()
+    # app.run(debug = True)
+    app.run()
 
