@@ -33,6 +33,8 @@ def check():
     if request.method == "GET":
         job_id = request.args.get('job_id')
         job = q.fetch_job(job_id)
+        if not job:
+            return jsonify('no job id')
         if job.is_finished:
             return jsonify(pronounceability=job.result)
         if job.is_failed:
