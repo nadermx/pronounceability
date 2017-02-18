@@ -9,3 +9,8 @@ Pull requests accepted
 Flask
 Pony
 RQ
+
+
+# api
+
+    Just added in a json return, https://pronounceability.com/api/word.json?word=pronounceability
