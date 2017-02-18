@@ -22,7 +22,7 @@ def index():
 @models.db_session
 def check():
     if request.method == "POST":
-        word = request.form['word']
+        word = request.form.get('word', False)
         print(word)
         db_word = models.Word.get(word=word)
         if not db_word:
@@ -40,6 +40,22 @@ def check():
         if job.is_failed:
             return jsonify(pronounceability='Error')
         return jsonify(False)
+
+@app.route('/api/word.json', methods=['GET'])
+@models.db_session
+def api():
+    word = request.args.get('word')
+    db_word = models.Word.get(word=word)
+    if not db_word:
+        queued_jobs = q.jobs
+        for j in queued_jobs:
+            if j.meta['word'] == word:
+                return jsonify(False)
+        job = q.enqueue(check_pronounceability, args=(word,))
+        job.meta['word'] = word
+        job.save()
+        return jsonify(False)
+    return jsonify(pronounceability=db_word.pronounceability)
 
 if __name__ == '__main__':
     # app.run(host='0.0.0.0', port=5000, debug=True)
