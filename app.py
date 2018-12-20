@@ -41,7 +41,7 @@ def check():
         word = request.form.get('word', False)
         pronounceability = check_pronounceability(word)
         if not pronounceability:
-            pronounceability = "0.0
+            pronounceability = "0.0"
         return render_template('index.html', pronounceability=pronounceability)
 
 if __name__ == '__main__':
