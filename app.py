@@ -1,64 +1,51 @@
 from flask import Flask, render_template, jsonify, request
-from rq import Queue
 from flask_cors import CORS
-from utilities import check_pronounceability
-import rq_dashboard
-from redis import Redis
+from sklearn.pipeline import Pipeline
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.preprocessing import LabelBinarizer
+import random
 
 app = Flask(__name__)
-app.config.from_object(rq_dashboard.default_settings)
-app.register_blueprint(rq_dashboard.blueprint, url_prefix="/rq")
-CORS(app)
-conn = Redis()
-q = Queue(connection=conn)
 
-import models
+words = [w.strip() for w in open('words.txt') if w == w.lower()]
+def scramble(s):
+    return "".join(random.sample(s, len(s)))
+
+scrambled = [scramble(w) for w in words]
+X = words+scrambled
+# explicitly create binary labels
+label_binarizer = LabelBinarizer()
+y = label_binarizer.fit_transform(['word']*len(words) + ['unpronounceable']*len(scrambled))
+
+text_clf = Pipeline([
+    ('vect', CountVectorizer(analyzer='char', ngram_range=(1, 3))),
+    ('clf', MultinomialNB())
+])
+text_clf = text_clf.fit(X, y)
+# you might want to persist the Pipeline to disk at this point to ensure it's not lost in case there is a crash
+
+def check_pronounceability(word):
+    stuff = text_clf.predict_proba([word])
+    pronounceability = round(100*stuff[0][1], 2)
+    return pronounceability
+
 
 @app.route('/')
 def index():
     return render_template('index.html')
 
 @app.route('/api/word', methods=['POST', 'GET'])
-@models.db_session
 def check():
     if request.method == "POST":
         word = request.form.get('word', False)
-        print(word)
-        db_word = models.Word.get(word=word)
-        if not db_word:
-            job = q.enqueue(check_pronounceability, args=(word,))
-            return jsonify(job=job.id)
-        else:
-            return jsonify(pronounceability=db_word.pronounceability)
-    if request.method == "GET":
-        job_id = request.args.get('job_id')
-        job = q.fetch_job(job_id)
-        if not job:
-            return jsonify('no job id')
-        if job.is_finished:
-            return jsonify(pronounceability=job.result)
-        if job.is_failed:
-            return jsonify(pronounceability='Error')
-        return jsonify(False)
-
-@app.route('/api/word.json', methods=['GET'])
-@models.db_session
-def api():
-    word = request.args.get('word')
-    db_word = models.Word.get(word=word)
-    if not db_word:
-        queued_jobs = q.jobs
-        for j in queued_jobs:
-            if j.meta['word'] == word:
-                return jsonify(False)
-        job = q.enqueue(check_pronounceability, args=(word,))
-        job.meta['word'] = word
-        job.save()
-        return jsonify(False)
-    return jsonify(pronounceability=db_word.pronounceability)
+        pronounceability = check_pronounceability(word)
+        if not pronounceability:
+            pronounceability = "0.0
+        return render_template('index.html', pronounceability=pronounceability)
 
 if __name__ == '__main__':
     # app.run(host='0.0.0.0', port=5000, debug=True)
-    # app.run(debug = True)
+    # app.run(debug = True, threaded=True)
     app.run()
 
