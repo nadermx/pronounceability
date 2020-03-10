@@ -7,8 +7,13 @@ from sklearn.preprocessing import LabelBinarizer
 import random
 import datetime
 
+
 app = Flask(__name__)
-g.year = datetime.date.today().year
+
+@app.before_request
+def year():
+    g.year = datetime.date.today().year
+
 words = [w.strip() for w in open('words.txt') if w == w.lower()]
 def scramble(s):
     return "".join(random.sample(s, len(s)))
