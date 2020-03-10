@@ -1,13 +1,14 @@
-from flask import Flask, render_template, jsonify, request
+from flask import Flask, render_template, jsonify, request, g
 from flask_cors import CORS
 from sklearn.pipeline import Pipeline
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.preprocessing import LabelBinarizer
 import random
+import datetime
 
 app = Flask(__name__)
-
+g.year = datetime.date.today().year
 words = [w.strip() for w in open('words.txt') if w == w.lower()]
 def scramble(s):
     return "".join(random.sample(s, len(s)))
