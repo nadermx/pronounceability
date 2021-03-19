@@ -3,7 +3,7 @@ Click==7.0
 Flask==1.0.2
 Flask-Cors==3.0.7
 itsdangerous==1.1.0
-Jinja2==2.10
+Jinja2==2.11.3
 MarkupSafe==1.1.0
 numpy==1.15.4
 python-dateutil==2.7.5
